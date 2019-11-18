@@ -45,12 +45,32 @@ function experiencesAPI(app) {
         }
     });
 
+
     //Route: Experiences filtered by date
     router.get("/byDate/:SearchDate", async function(req,res,next){
         cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
         const { SearchDate } = req.params;
+        console.log("SearchDate is: ",SearchDate);
         try{
             const experiences = await experiencesService.getExperiencesFiltered({ SearchDate });
+            res.status(200).json({
+                data: experiences,
+                message: `experiences for ${SearchDate} retrieved`,
+            });
+        }catch(err){
+            next(err);
+        }
+    });
+
+    //Route: Experiences filtered by date or location
+    // getting query from URL/search/SearchQuery?date=2019-11-09&location=Campeche
+    router.get("/search/SearchQuery", async function(req,res,next){
+        cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
+        const SearchQuery = req.query;
+        const SearchDate = SearchQuery.date;
+        const SearchLocation = SearchQuery.location;
+        try{
+            const experiences = await experiencesService.getExperiencesFiltered({ SearchDate, SearchLocation });
             res.status(200).json({
                 data: experiences,
                 message: `experiences for ${SearchDate} retrieved`,
@@ -78,17 +98,17 @@ function experiencesAPI(app) {
     
     // Route: Update an Experience
     //router.put("/:experienceID", validationHandler({ movieID: movieIdSchema }, 'params' ), validationHandler(updateMovieSchema), async function(req,res,next){
-    //router.put("/:experienceID", async function(req,res,next){
-    router.put("/event", async function(req,res,next){
+    router.put("/:experienceID", async function(req,res,next){
+    //router.put("/event", async function(req,res,next){
 
-        // const { body: experience } = req;
-        // const { experienceID } = req.params;
+        const { body: experience } = req;
+        const { experienceID } = req.params;
         // http://{{url}}/api/experiences/event?id=5dc71d3016ecdc3641d9191a&qty=7
         //http://{{url}}/api/experiences/5dc71d3016ecdc3641d9191a
-        const query = req.query;
-        console.log("query: ",query);
-        const experienceID = req.query.id;
-        const experience = `{ 'current-capacity': ${req.query.qty} }`;
+        //const query = req.query;
+        //console.log("query: ",query);
+        //const experienceID = req.query.id;
+        //const experience = `{ 'current-capacity': ${req.query.qty} }`;
         
        console.log("experienceID es: ",experienceID);
        console.log("experience es: ",experience);

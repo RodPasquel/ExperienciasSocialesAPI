@@ -17,9 +17,9 @@ class ExperiencesService {
         return experiences || [];
     }
 
-    async getExperiencesFiltered({ SearchDate }) {
+    async getExperiencesFiltered({ SearchDate, SearchLocation }) {
         this.collection = 'ExperiencesEvents';
-        const experiences = await this.mongoDB.getSearchDate(this.collection, SearchDate);
+        const experiences = await this.mongoDB.getSearchDate(this.collection, SearchDate,SearchLocation);
         return experiences || [];
     }
 
